@@ -15,5 +15,7 @@
 	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-swt-7.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-win32-7.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-win64-7.12.jar"/>
+	<classpathentry kind="lib" path="/home/ee/Downloads/jar_files/jfreechart-1.5.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

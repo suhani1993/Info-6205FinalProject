@@ -1,4 +1,4 @@
-package Map;
+package main.map;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 
@@ -9,7 +9,9 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.swing.JButton;
@@ -25,6 +27,8 @@ import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.engine.Engine;
 import com.teamdev.jxbrowser.engine.EngineOptions;
 import com.teamdev.jxbrowser.view.swing.BrowserView;
+
+import main.spread.RegionWiseSpread;
 /**
  * The simplest application with the integrated browser component.
  *
@@ -43,24 +47,29 @@ public class DistanceMap {
     private static final int MAX_ZOOM = 21;
     //private static final String setMarkerScript = "var locations = [\n  ['Bondi Beach', -33.890542, 151.274856, 4],\n  ['Coogee Beach', -33.923036, 151.259052, 5],\n  ['Cronulla Beach', -34.028249, 151.157507, 3],\n  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],\n  ['Maroubra Beach', -33.950198, 151.259302, 1]\n];\n\nvar marker, i;\n\nfor (i = 0; i < locations.length; i++) {  \n  marker = new google.maps.Marker({\n\tposition: new google.maps.LatLng(locations[i][1], locations[i][2]),\n\tmap: map,\n\ttitle: locations[i][0]\n  });\n}";
     
-    
-    private static void setConfig(LocationPoint locationPoint) {
-		JFrame frame = new JFrame("Set Configurations");
+	public static void setConfig(LocationPoint locationPoint) {
+		JFrame frame = new JFrame();
+		setNameOfComponent(frame, "Set Configurations");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.setSize(800, 500);
-        frame.setVisible(true);
+		frame.setSize(800, 500);
+		boolean isVisible = checkJFrameVisible(frame);
+        if(!isVisible) {
+        	frame.setVisible(true);
+        }
 		JPanel mainPanel = new JPanel();
 		
 		Font font1 = new Font("SansSerif", Font.BOLD, 20);
 		
-		JLabel label = new JLabel(locationPoint.getName());
+		JLabel label = new JLabel();
+		setNameOfComponent(label, locationPoint.getName());
 		mainPanel.add(label);
 		label.setFont(font1);
 		
 		FileInputStream in;
-		try {	
-			in = new FileInputStream("config.properties");
+		try {
+			in = readConfigFile("config.properties");
+//			in = new FileInputStream("config.properties");
 			Properties p = new Properties();
 			p.load(in);
 			in.close();
@@ -79,7 +88,8 @@ public class DistanceMap {
 				mainPanel.add(txtname);
 			}
 			
-			JButton submitButton = new JButton("Submit");
+			JButton submitButton = new JButton();
+			setNameOfComponent(submitButton, "Submit");
 			submitButton.addActionListener(new ActionListener() {
 				
 				@Override
@@ -94,7 +104,12 @@ public class DistanceMap {
 						FileOutputStream out = new FileOutputStream("config.properties");
 						p.store(out, null);
 						out.close();
-						frame.dispose(); 
+						frame.dispose();
+						
+						RegionWiseSpread regionWiseSpread = new RegionWiseSpread(); 
+						regionWiseSpread.setDataInLocationWiseSpread(regionWiseSpread, locationPoint);
+						regionWiseSpread.generateRandomData(regionWiseSpread);
+						
 			        } catch (Exception e) {
 			        	e.printStackTrace();
 			        }
@@ -104,17 +119,44 @@ public class DistanceMap {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 		frame.add(mainPanel);
-		
 	}
-    
-    /**
+
+    public static FileInputStream readConfigFile(String fileName) {
+    	try {
+			FileInputStream in = new FileInputStream(fileName);
+			if(in.read() != -1) {
+				return in;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return null;
+	}
+
+	public static Component setNameOfComponent(Component frame, String name) {
+		if(frame instanceof JFrame) {
+			JFrame jframe = (JFrame)frame;
+			jframe.setName(name);
+			return frame;
+		}else if(frame instanceof JLabel) {
+			JLabel jLabel = (JLabel)frame;
+			jLabel.setName(name);
+			return jLabel;
+		}else if(frame instanceof JButton) {
+			JButton button = (JButton)frame;
+			button.setName(name);
+			return button;
+		}
+		return null;
+	}
+
+	/**
      * In map.html file default zoom value is set to 5.
      */
     private static int zoomValue = 5;
 
-	public void selectLocation(LocationPoint locationPoint) {
+	public boolean selectLocation(LocationPoint locationPoint) {
 		
 
         EngineOptions options =
@@ -169,17 +211,20 @@ public class DistanceMap {
 			            if (browser.url()!= null) {
 			                String[] m = browser.url().split("!3d", 0);
 			                String[] arr = m[0].split("place");
-			                String[] locationArr = arr[1].split("/");
-			                String str = locationArr[1];
-			                str = str.replaceAll("[+%&]", " ");
-			                System.out.println("str :: " + str);
-			                locationPoint.setName(str);
+			                if(arr != null && arr[1] != null) {
+			                	String[] locationArr = arr[1].split("/");
+			                	if(locationArr[1] != null) {
+			                		String str = locationArr[1];
+			                		str = str.replaceAll("[+%&]", " ");
+			                		locationPoint.setName(str);
+			                	}
+			                }
 			                String[] n = m[1].split("!4d");
 			                System.out.println("Lat" + n[0] + "  " + "Lon" + n[1]);
 			                double lat = Double.parseDouble(n[0]);
 			                double lon = Double.parseDouble(n[1]);
-			                locationPoint.setLatitude(lat);
-			                locationPoint.setLongitude(lon);
+			                locationPoint.setX((int)lat);
+			                locationPoint.setY((int)lon);
 			            }
 			            toolBar.setVisible(false);
 			            frame.dispose();
@@ -198,13 +243,22 @@ public class DistanceMap {
 	        frame.add(toolBar, BorderLayout.SOUTH);
 	        frame.add(view, BorderLayout.CENTER);
 	        frame.setSize(800, 500);
-	        frame.setVisible(true);
+	        boolean isVisible = checkJFrameVisible(frame);
+	        if(!isVisible) {
+	        	frame.setVisible(true);
+	        }
 	        
 	        
 	        browser.navigation().loadUrl("https://www.google.com/maps");
-	        
-	        
         });
-        
+        return true;
+	}
+
+	public static boolean checkJFrameVisible(JFrame frame) {
+		if(frame.isVisible()) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 }
