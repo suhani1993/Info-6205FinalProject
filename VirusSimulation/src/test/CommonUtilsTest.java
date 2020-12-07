@@ -19,6 +19,20 @@ class CommonUtilsTest {
 	}
 	
 	@Test
+	void testEuclidianDistance() {
+		
+		int x1 = 3;
+	    int y1 = 4;
+	    int x2 = 7;
+	    int y2 = 1;
+		
+		double distance = CommonUtils.euclidianDistance(x1, x2, y1, y2);
+
+	    assertEquals(5, distance, 0.01);
+		assertEquals(8.48, CommonUtils.euclidianDistance(8,2,10,4), 0.01);
+	}
+	
+	@Test
 	void testRandomAge() {
 		
 		assertEquals(CommonUtils.randomAge(50), 50);

@@ -69,4 +69,15 @@ public class CommonUtils {
 		return property;
 	}
 
+	public static double euclidianDistance(int x1, int x2, int y1, int y2) {
+		double xDistnace = Math.pow((x2-x1), 2);
+		double yDistance = Math.pow((y2-y1), 2);
+		return Math.sqrt(xDistnace + yDistance);
+		
+	}
+
+	public static void getRandomNumberInRangeHundred(int i) {
+		
+	}
+
 }

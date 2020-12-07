@@ -88,7 +88,7 @@ public class DistanceMap {
 				mainPanel.add(txtname);
 			}
 			
-			JButton submitButton = new JButton();
+			JButton submitButton = new JButton("Submit");
 			setNameOfComponent(submitButton, "Submit");
 			submitButton.addActionListener(new ActionListener() {
 				
@@ -103,6 +103,7 @@ public class DistanceMap {
 				        }
 						FileOutputStream out = new FileOutputStream("config.properties");
 						p.store(out, null);
+						
 						out.close();
 						frame.dispose();
 						

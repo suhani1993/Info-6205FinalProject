@@ -124,15 +124,14 @@ public class RegionWiseSpread extends Spread {
 			PersonDirectory personDirectory = new PersonDirectory();
 			personDirectory.setPersonList(new ArrayList<>());
 			
-			
 			Double usageofMask = regionWiseSpread.getUsageOfMask();
 			int totalMasks = (int)(population * usageofMask);
 			
 			int maskcount = 0;
 			for(int i=0;i<population;i++) {
 				LocationPoint locationPoint = new LocationPoint();
-				locationPoint.setX((random.nextInt(50)));
-				locationPoint.setY((random.nextInt(50)));
+				locationPoint.setX((random.nextInt(100)));
+				locationPoint.setY((random.nextInt(100)));
 				boolean isWearMask = CommonUtils.getRandomBoolean(random.nextInt(2));
 				if(maskcount <= totalMasks && isWearMask) {
 					maskcount++;

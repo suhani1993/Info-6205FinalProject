@@ -51,19 +51,22 @@ public class PersonDirectory {
 				if(person.getPersonId() != nextPerson.getPersonId() && 
 						(person.isInfected() && !nextPerson.isInfected()) || (!person.isInfected() && nextPerson.isInfected())){
 					
-					double xSquare = Math.pow((person.getPoint().getX() - nextPerson.getPoint().getX()), 2);
-					double ySquare = Math.pow((person.getPoint().getY() - nextPerson.getPoint().getY()), 2);
-					if(Math.sqrt((xSquare + ySquare)) <= socialDistance) {
+					double euDistance = CommonUtils.euclidianDistance(person.getPoint().getX() , nextPerson.getPoint().getX(), 
+							person.getPoint().getY(), nextPerson.getPoint().getY());
+//					double xSquare = Math.pow((person.getPoint().getX() - nextPerson.getPoint().getX()), 2);
+//					double ySquare = Math.pow((person.getPoint().getY() - nextPerson.getPoint().getY()), 2);
+					if(euDistance <= socialDistance) {
 					
 						if(perDayInfectedPeople.get(nextDate) == null) {
 							perDayInfectedPeople.put(nextDate, new ArrayList<>());
 						}
 						if(!person.isInfected()) {
 							person.setInfected(true);
-							perDayInfectedPeople.get(nextDate).add(nextPerson);
-						}else if(!nextPerson.isInfected()){
-							nextPerson.setInfected(true);
 							perDayInfectedPeople.get(nextDate).add(person);
+						}
+						if(!nextPerson.isInfected()){
+							nextPerson.setInfected(true);
+							perDayInfectedPeople.get(nextDate).add(nextPerson);
 						}
 					}
 				}
@@ -92,18 +95,23 @@ public class PersonDirectory {
 				for(Person nextPerson : personDirectory.getPersonList()) {
 					if(person.getPersonId() != nextPerson.getPersonId() && (person.isInfected() || nextPerson.isInfected())){
 						
-						double xSquare = Math.pow((person.getPoint().getX() - nextPerson.getPoint().getX()), 2);
-						double ySquare = Math.pow((person.getPoint().getY() - nextPerson.getPoint().getY()), 2);
-						if(Math.sqrt((xSquare + ySquare)) <= regionWiseSpread.getSocialDistance()) {
+						double euDistance = CommonUtils.euclidianDistance(person.getPoint().getX() , nextPerson.getPoint().getX(), 
+								person.getPoint().getY(), nextPerson.getPoint().getY());
+//						double xSquare = Math.pow((person.getPoint().getX() - nextPerson.getPoint().getX()), 2);
+//						double ySquare = Math.pow((person.getPoint().getY() - nextPerson.getPoint().getY()), 2);
+						if(euDistance <= regionWiseSpread.getSocialDistance()) {
+							//Mask effectiveness
+							CommonUtils.getRandomNumberInRangeHundred(100);
 							if(perDayInfectedPeople.get(nextDate) == null) {
 								perDayInfectedPeople.put(nextDate, new ArrayList<>());
 							}
 							if(!person.isInfected()) {
 								person.setInfected(true);
-								perDayInfectedPeople.get(nextDate).add(nextPerson);
-							}else {
-								nextPerson.setInfected(true);
 								perDayInfectedPeople.get(nextDate).add(person);
+							}
+							if(!nextPerson.isInfected()){
+								nextPerson.setInfected(true);
+								perDayInfectedPeople.get(nextDate).add(nextPerson);
 							}
 						}
 					}
