@@ -3,17 +3,17 @@ package main.map;
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,6 +22,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
 
 import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.engine.Engine;
@@ -47,6 +48,9 @@ public class DistanceMap {
     private static final int MAX_ZOOM = 21;
     //private static final String setMarkerScript = "var locations = [\n  ['Bondi Beach', -33.890542, 151.274856, 4],\n  ['Coogee Beach', -33.923036, 151.259052, 5],\n  ['Cronulla Beach', -34.028249, 151.157507, 3],\n  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],\n  ['Maroubra Beach', -33.950198, 151.259302, 1]\n];\n\nvar marker, i;\n\nfor (i = 0; i < locations.length; i++) {  \n  marker = new google.maps.Marker({\n\tposition: new google.maps.LatLng(locations[i][1], locations[i][2]),\n\tmap: map,\n\ttitle: locations[i][0]\n  });\n}";
     
+    /*
+     * Set configurations in local object by GUI
+     */
 	public static void setConfig(LocationPoint locationPoint) {
 		JFrame frame = new JFrame();
 		setNameOfComponent(frame, "Set Configurations");
@@ -62,36 +66,65 @@ public class DistanceMap {
 		Font font1 = new Font("SansSerif", Font.BOLD, 20);
 		
 		JLabel label = new JLabel();
-		setNameOfComponent(label, locationPoint.getName());
+		label = (JLabel) setNameOfComponent(label, locationPoint.getName());
 		mainPanel.add(label);
 		label.setFont(font1);
 		
 		FileInputStream in;
 		try {
-			in = readConfigFile("config.properties");
-//			in = new FileInputStream("config.properties");
+			//read config file
+			in = new FileInputStream("config.properties");
 			Properties p = new Properties();
 			p.load(in);
 			in.close();
 			
 			mainPanel.add(new JSeparator(JSeparator.VERTICAL),
 			          BorderLayout.LINE_START);
+
+			Border blackline = BorderFactory.createLineBorder(Color.black);
 			
+			//read all properties of config file
 			for(Object key : p.keySet()) {
 				
+				//Set label for config file properties
 				mainPanel.add(new JSeparator(SwingConstants.VERTICAL));
+				label.setPreferredSize(new Dimension(500, 24));
+				if(key.equals("SOCIAL_DISTANCING")) {
+					key = key + " (meter) ";
+				}
 				label = new JLabel((String) key + ": ");
 				mainPanel.add(label);
 				
+				
+				//Create textfiled to assign value to each config property
 				JTextField txtname = new JTextField();
 				txtname.setPreferredSize(new Dimension(200, 24));
 				mainPanel.add(txtname);
+				
+				mainPanel.add(new JSeparator(SwingConstants.VERTICAL));
+				label.setPreferredSize(new Dimension(300, 24));
+				label = new JLabel("");
+				mainPanel.add(label);
 			}
 			
-			JButton submitButton = new JButton("Submit");
+			mainPanel.add(new JSeparator(SwingConstants.VERTICAL));
+			
+			//set size manually to label
+			label.setPreferredSize(new Dimension(300, 24));
+			label = new JLabel("");
+			mainPanel.add(label);
+			mainPanel.add(new JSeparator(SwingConstants.VERTICAL));
+			
+			//create submit button to save property values in config file
+			JButton submitButton = new JButton();
 			setNameOfComponent(submitButton, "Submit");
 			submitButton.addActionListener(new ActionListener() {
-				
+				/*
+				 * 1. Set each propety value in config file
+				 * 2. Create local object and save confile file 
+				 *    property and value into it
+				 * 3. Generate random persons
+				 */
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -107,8 +140,11 @@ public class DistanceMap {
 						out.close();
 						frame.dispose();
 						
+						//Set config file property value to local object
 						RegionWiseSpread regionWiseSpread = new RegionWiseSpread(); 
 						regionWiseSpread.setDataInLocationWiseSpread(regionWiseSpread, locationPoint);
+						
+						//Generate random persons
 						regionWiseSpread.generateRandomData(regionWiseSpread);
 						
 			        } catch (Exception e) {
@@ -123,10 +159,11 @@ public class DistanceMap {
 		frame.add(mainPanel);
 	}
 
-    public static FileInputStream readConfigFile(String fileName) {
+	public static FileInputStream readConfigFile(String fileName) {
     	try {
 			FileInputStream in = new FileInputStream(fileName);
-			if(in.read() != -1) {
+			int i;
+			while((i = in.read()) != -1) {
 				return in;
 			}
 		} catch (Exception e) {
@@ -139,14 +176,17 @@ public class DistanceMap {
 		if(frame instanceof JFrame) {
 			JFrame jframe = (JFrame)frame;
 			jframe.setName(name);
+			jframe.setTitle(name);
 			return frame;
 		}else if(frame instanceof JLabel) {
 			JLabel jLabel = (JLabel)frame;
 			jLabel.setName(name);
+			jLabel.setText(name);
 			return jLabel;
 		}else if(frame instanceof JButton) {
 			JButton button = (JButton)frame;
 			button.setName(name);
+			button.setText(name);
 			return button;
 		}
 		return null;
@@ -157,6 +197,11 @@ public class DistanceMap {
      */
     private static int zoomValue = 5;
 
+    /*
+     * locationPoint -> Used to set latitude and longitude of selected location
+     * 
+     * This method is used to select location in google map 
+     */
 	public boolean selectLocation(LocationPoint locationPoint) {
 		
 
@@ -199,33 +244,40 @@ public class DistanceMap {
                     browser.mainFrame().ifPresent(frame ->
                             frame.executeJavaScript(setMarkerScript)));
             
+            //Create JFrame to load google map api
             JFrame frame = new JFrame("Google Maps");
             JPanel toolBar = new JPanel();
        
+            /*
+             * After selecting any location in map, 
+             * need to click on location button to set location in application
+             */
             JButton locationButton = new JButton("Set Location");
             locationButton.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-
+						
 			            if (browser.url()!= null) {
 			                String[] m = browser.url().split("!3d", 0);
-			                String[] arr = m[0].split("place");
-			                if(arr != null && arr[1] != null) {
-			                	String[] locationArr = arr[1].split("/");
-			                	if(locationArr[1] != null) {
-			                		String str = locationArr[1];
-			                		str = str.replaceAll("[+%&]", " ");
-			                		locationPoint.setName(str);
+			                if(m != null && m.length > 0) {
+			                	String[] arr = m[0].split("place");
+			                	if(arr != null && arr[1] != null) {
+			                		String[] locationArr = arr[1].split("/");
+			                		if(locationArr[1] != null) {
+			                			String str = locationArr[1];
+			                			str = str.replaceAll("[+%&]", " ");
+			                			locationPoint.setName(str);
+			                		}
 			                	}
+			                	String[] n = m[1].split("!4d");
+				                System.out.println("Lat" + n[0] + "  " + "Lon" + n[1]);
+				                double lat = Double.parseDouble(n[0]);
+				                double lon = Double.parseDouble(n[1]);
+				                locationPoint.setX((int)lat);
+				                locationPoint.setY((int)lon);
 			                }
-			                String[] n = m[1].split("!4d");
-			                System.out.println("Lat" + n[0] + "  " + "Lon" + n[1]);
-			                double lat = Double.parseDouble(n[0]);
-			                double lon = Double.parseDouble(n[1]);
-			                locationPoint.setX((int)lat);
-			                locationPoint.setY((int)lon);
 			            }
 			            toolBar.setVisible(false);
 			            frame.dispose();
@@ -233,11 +285,10 @@ public class DistanceMap {
 			            setConfig(locationPoint);
 			            
 			        } catch (Exception e) {
-			        	e.printStackTrace();
+//			        	e.printStackTrace();
+			        	setConfig(locationPoint);
 			        }
 				}
-				
-				
 			});
 	        toolBar.add(locationButton);
 	        

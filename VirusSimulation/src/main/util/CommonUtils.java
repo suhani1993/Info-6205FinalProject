@@ -28,8 +28,8 @@ public class CommonUtils {
 	}
 	
 	public static int randomWalkPercent(int randomWalkPercent) {
-		if(randomWalkPercent == 0) {
-			randomWalkPercent = randomWalkPercent + 1;
+		if(randomWalkPercent <5) {
+			randomWalkPercent = randomWalkPercent + 5;
 		}
 		return randomWalkPercent;
 	}
@@ -76,8 +76,5 @@ public class CommonUtils {
 		
 	}
 
-	public static void getRandomNumberInRangeHundred(int i) {
-		
-	}
 
 }
