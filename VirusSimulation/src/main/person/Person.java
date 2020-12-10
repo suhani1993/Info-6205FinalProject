@@ -119,24 +119,17 @@ public class Person {
 			nextY = nextY * -1;
 		}
 		nextX = locationPoint.getX() + nextX;
-		if(nextX > 100) {
-			nextX = random.nextInt(100);
-		}else if(nextX < -100) {
-			nextX = random.nextInt(100) * -1;
+		if(nextX > 200) {
+			nextX = random.nextInt(200);
+		}else if(nextX < -200) {
+			nextX = random.nextInt(200) * -1;
 		}
 		nextY = locationPoint.getY() + nextY;
-		if(nextY > 100) {
-			nextY = random.nextInt(100);
-		}else if(nextY < -100) {
-			nextY = random.nextInt(100) * -1;
+		if(nextY > 200) {
+			nextY = random.nextInt(200);
+		}else if(nextY < -200) {
+			nextY = random.nextInt(200) * -1;
 		}
-		
-//		while (nextX > 100) {
-//			nextX = locationPoint.getX() + random.nextInt(100);
-//		}
-//		while (nextY > 100) {
-//			nextY = locationPoint.getY() + random.nextInt(100);
-//		}
 
 		locationPoint.setX(nextX);
 		locationPoint.setY(nextY);

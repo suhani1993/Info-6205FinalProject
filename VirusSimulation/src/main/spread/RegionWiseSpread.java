@@ -211,12 +211,12 @@ public class RegionWiseSpread extends Spread {
 	public LocationPoint createNewLocationPoint(Random random) {
 		LocationPoint locationPoint = new LocationPoint();
 		boolean isPositiveX = CommonUtils.getRandomBoolean(random.nextInt(2));
-		int x = random.nextInt(100);
+		int x = random.nextInt(200);
 		if(!isPositiveX) {
 			x = x*-1;
 		}
 		
-		int y = random.nextInt(100);
+		int y = random.nextInt(200);
 		if(!isPositiveX) {
 			y = y*-1;
 		}
@@ -241,17 +241,5 @@ public class RegionWiseSpread extends Spread {
 		//calculate line graph from infected people
 		graph.populateLineGraphDateWiseInfected();
 	}
-	
-	private void createLineGraphAgeWiseInfected() {
-		JFrame jFrame = new JFrame("Graph");
-		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jFrame.setSize(800, 800);
-		jFrame.setVisible(true);
-		JPanel jPanel = new JPanel();
-		jPanel.setBackground(new Color(236, 113, 107));
-		Graph graph = new Graph(jFrame, jPanel);
-		graph.populateLineGraphAgeWiseInfected();
-	}
-
 }
 

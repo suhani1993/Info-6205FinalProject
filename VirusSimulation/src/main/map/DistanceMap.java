@@ -272,7 +272,6 @@ public class DistanceMap {
 			                		}
 			                	}
 			                	String[] n = m[1].split("!4d");
-				                System.out.println("Lat" + n[0] + "  " + "Lon" + n[1]);
 				                double lat = Double.parseDouble(n[0]);
 				                double lon = Double.parseDouble(n[1]);
 				                locationPoint.setX((int)lat);

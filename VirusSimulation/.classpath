@@ -6,6 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jar_files/jfreechart-1.5.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-7.12.jar"/>
