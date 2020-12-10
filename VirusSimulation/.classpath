@@ -6,16 +6,16 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-javafx-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-linux64-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-linux64-arm-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-mac-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-swing-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-swt-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-win32-7.12.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/ee/Downloads/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-win64-7.12.jar"/>
-	<classpathentry kind="lib" path="/home/ee/Downloads/jar_files/jfreechart-1.5.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jar_files/jfreechart-1.5.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-javafx-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-linux64-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-linux64-arm-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-mac-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-swing-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-swt-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-win32-7.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahs/eclipse-workspace/Info-6205FinalProject/VirusSimulation/bin/jxbrowser-7.12-cross-desktop-win_mac_linux/lib/jxbrowser-win64-7.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import main.map.LocationPoint;
+import main.util.CommonUtils;
 
 public class Person {
 
@@ -108,14 +109,34 @@ public class Person {
 	public static void gotoAnotherPlace(LocationPoint locationPoint, int nextX, int nextY) {
 		Random random = new Random();
 
+		boolean isPositiveX = CommonUtils.getRandomBoolean(random.nextInt(2));
+		if(!isPositiveX) {
+			nextX = nextX * -1;
+		}
+		
+		boolean isPositiveY = CommonUtils.getRandomBoolean(random.nextInt(2));
+		if(!isPositiveY) {
+			nextY = nextY * -1;
+		}
 		nextX = locationPoint.getX() + nextX;
+		if(nextX > 100) {
+			nextX = random.nextInt(100);
+		}else if(nextX < -100) {
+			nextX = random.nextInt(100) * -1;
+		}
 		nextY = locationPoint.getY() + nextY;
-		while (nextX > 100) {
-			nextX = locationPoint.getX() + random.nextInt(100);
+		if(nextY > 100) {
+			nextY = random.nextInt(100);
+		}else if(nextY < -100) {
+			nextY = random.nextInt(100) * -1;
 		}
-		while (nextY > 100) {
-			nextY = locationPoint.getY() + random.nextInt(100);
-		}
+		
+//		while (nextX > 100) {
+//			nextX = locationPoint.getX() + random.nextInt(100);
+//		}
+//		while (nextY > 100) {
+//			nextY = locationPoint.getY() + random.nextInt(100);
+//		}
 
 		locationPoint.setX(nextX);
 		locationPoint.setY(nextY);

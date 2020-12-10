@@ -28,9 +28,6 @@ public class CommonUtils {
 	}
 	
 	public static int randomWalkPercent(int randomWalkPercent) {
-		if(randomWalkPercent <5) {
-			randomWalkPercent = randomWalkPercent + 5;
-		}
 		return randomWalkPercent;
 	}
 

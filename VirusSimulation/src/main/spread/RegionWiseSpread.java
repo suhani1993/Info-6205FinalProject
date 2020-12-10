@@ -210,8 +210,19 @@ public class RegionWiseSpread extends Spread {
 
 	public LocationPoint createNewLocationPoint(Random random) {
 		LocationPoint locationPoint = new LocationPoint();
-		locationPoint.setX((random.nextInt(100)));
-		locationPoint.setY((random.nextInt(100)));
+		boolean isPositiveX = CommonUtils.getRandomBoolean(random.nextInt(2));
+		int x = random.nextInt(100);
+		if(!isPositiveX) {
+			x = x*-1;
+		}
+		
+		int y = random.nextInt(100);
+		if(!isPositiveX) {
+			y = y*-1;
+		}
+		
+		locationPoint.setX(x);
+		locationPoint.setY(y);
 		return locationPoint;
 	}
 

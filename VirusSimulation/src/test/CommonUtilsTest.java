@@ -77,7 +77,7 @@ public class CommonUtilsTest {
 	
 	@Test
 	public void testRandomWalkPercent() {
-		assertEquals(CommonUtils.randomWalkPercent(0), 5);
+		assertEquals(CommonUtils.randomWalkPercent(0), 0);
 		assertEquals(CommonUtils.randomWalkPercent(8), 8);
 	}
 }

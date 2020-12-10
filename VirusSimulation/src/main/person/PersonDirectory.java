@@ -127,6 +127,9 @@ public class PersonDirectory {
 						 * 3. If both persons has worn mask and both masks are effective then do
 						 *    not infect a person
 						 */
+//						if(person.isMaskEffective() || nextPerson.isMaskEffective()) {
+//							continue;
+//						}else
 						if(!person.isMaskEffective() || !nextPerson.isMaskEffective()) {
 							if(person.getInfectedPeople() == null) {
 								person.setInfectedPeople(new ArrayList<>());
@@ -175,7 +178,7 @@ public class PersonDirectory {
 	public void generatePatient(PersonDirectory personDirectory, RegionWiseSpread regionWiseSpread) {
 		Calendar calendar = Calendar.getInstance();
 		Random random = new Random();
-		int randomWalkPercent = CommonUtils.randomWalkPercent(random.nextInt(10));
+		int randomWalkPercent = CommonUtils.randomWalkPercent(random.nextInt(5));
 		int totalWalk = (regionWiseSpread.getPopulation() * randomWalkPercent)/100;
 		//For 30 day the system performs disease spread calculation
 		for(int i=0;i<regionWiseSpread.getNoofDays();i++) {
