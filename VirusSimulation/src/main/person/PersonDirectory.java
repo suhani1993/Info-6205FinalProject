@@ -9,12 +9,15 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import main.map.LocationPoint;
 import main.spread.RegionWiseSpread;
 import main.util.CommonUtils;
 
 public class PersonDirectory {
+	
+	static Logger logger = Logger.getLogger(PersonDirectory.class.getName());
 	
 	private List<Person> personList;
 	public static Map<Date, List<Person>> perDayInfectedPeople = new TreeMap<>();
@@ -129,14 +132,14 @@ public class PersonDirectory {
 								person.setInfected(true);
 								person.setInfectionDate(nextDate);
 								nextPerson.getInfectedPeople().add(person);
-								perDayInfectedPeople.get(nextDate).add(person);
+								addDataInInfectedPeopleMap(nextDate, person);
 								personQueue.add(person);
 							}
 							if(!nextPerson.isInfected() && !nextPerson.isMaskEffective()) {
 								nextPerson.setInfected(true);
 								nextPerson.setInfectionDate(nextDate);
 								person.getInfectedPeople().add(nextPerson);
-								perDayInfectedPeople.get(nextDate).add(nextPerson);
+								addDataInInfectedPeopleMap(nextDate, nextPerson);
 								personQueue.add(nextPerson);
 							}
 						}
@@ -163,27 +166,21 @@ public class PersonDirectory {
 			initialInfected = 10;
 		}
 		for(int i=0;i<regionWiseSpread.getNoofDays();i++) {
-			calendar.setTime(new Date());
-			calendar.add(Calendar.DAY_OF_YEAR, i);
-			calendar.set(Calendar.MILLISECOND, 0);
-	        calendar.set(Calendar.SECOND, 0);
-	        calendar.set(Calendar.MINUTE, 0);
-	        calendar.set(Calendar.HOUR, 0);
-			Date nextDate = calendar.getTime();
-			if(perDayInfectedPeople.get(nextDate) == null) {
-				perDayInfectedPeople.put(nextDate, new ArrayList<>());
-			}
+			
+			Date nextDate = getNextDate(i, calendar);
 			if(i==0) {
+				logger.info("Virus Spread Start...");
 				for(int k=0;k<initialInfected;k++) {
 					Person person = personDirectory.getPersonList().get(k);
-					person.setFollowSocialDistancing(false);
 					person.setInfected(true);
 					person.setInfectionDate(nextDate);
-					perDayInfectedPeople.get(nextDate).add(person);
+					addDataInInfectedPeopleMap(nextDate, person);
 					personQueue.add(person);
 				}
 			}else {
-				
+				if(i==(regionWiseSpread.getNoofDays()/2)) {
+					logger.info("50% calculation complete...");
+				}
 				if(!personQueue.isEmpty()) {
 					calendar.setTime(nextDate);
 					calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -194,6 +191,30 @@ public class PersonDirectory {
 				}
 			}
 		}
+		logger.info("Virus Spread Complete...");
+	}
+
+	public Date getNextDate(int i, Calendar calendar) {
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_YEAR, i);
+		calendar = setDateAndTimeZero(calendar);
+		return calendar.getTime();
+		
+	}
+
+	public void addDataInInfectedPeopleMap(Date nextDate, Person person) {
+		if(perDayInfectedPeople.get(nextDate) == null) {
+			perDayInfectedPeople.put(nextDate, new ArrayList<>());
+		}
+		perDayInfectedPeople.get(nextDate).add(person);
+	}
+
+	public Calendar setDateAndTimeZero(Calendar calendar) {
+		calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        return calendar;
 	}
 
 	/*
@@ -204,7 +225,7 @@ public class PersonDirectory {
 	 *     Get random no from 0 to 100 -> If no between 0 and 80 mean a person will not infect
 	 *     If a no between 81 and 100 then a person will infect
 	 */
-	private void checkMaskEffectiveness(Person person, Person nextPerson, RegionWiseSpread regionWiseSpread, Random random) {
+	public void checkMaskEffectiveness(Person person, Person nextPerson, RegionWiseSpread regionWiseSpread, Random random) {
 		if(person.isWearMask() || nextPerson.isWearMask()) {
 			int maskEffectiveness = (int) Math.round(regionWiseSpread.getEffectivenessOfMask() * 100);
 			int effectiveness = random.nextInt(100);

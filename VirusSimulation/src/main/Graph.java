@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.io.FileInputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
@@ -24,12 +23,13 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import main.person.Person;
 import main.person.PersonDirectory;
-
+import java.util.logging.Logger;
 
 public class Graph extends javax.swing.JPanel {
-
+	
+	static Logger logger = Logger.getLogger(Graph.class.getName());
+	
 	JFreeChart chart;
 	JFrame jFrame;
 	JPanel jPanel;
@@ -42,7 +42,6 @@ public class Graph extends javax.swing.JPanel {
 	 * Creates graph from datewise infected people
 	 */
 	public void populateLineGraphDateWiseInfected() {
-		
 		FileInputStream in;
 		try {
 			//read config file and display factors and their values of config file
@@ -60,11 +59,12 @@ public class Graph extends javax.swing.JPanel {
 			for(Object key : p.entrySet()) {
 				str += key.toString() + ", ";
 			}
+			str = str.concat(" Total Infected=" );
 			str = str.concat(String.valueOf(total));
 			//Create Header label from config file factors and display all factor in a label
 			JLabel jLabel = new JLabel(str);
 			jLabel.setFont(new Font("Verdana", Font.PLAIN, 12));
-			jLabel.setPreferredSize(new Dimension(1200, 24));
+			jLabel.setPreferredSize(new Dimension(1300, 24));
 			jPanel.add(jLabel);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -81,7 +81,7 @@ public class Graph extends javax.swing.JPanel {
         ((CategoryPlot)plot).getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		
         ChartPanel chartPanel = new ChartPanel(chart);   
-        chartPanel.setPreferredSize(new java.awt.Dimension( 900 , 600 ) );
+        chartPanel.setPreferredSize(new java.awt.Dimension( 700 , 700 ) );
         jPanel.add(chartPanel, BorderLayout.CENTER);
         jFrame.setExtendedState(jFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         jFrame.add(jPanel);
@@ -94,13 +94,15 @@ public class Graph extends javax.swing.JPanel {
     private DefaultCategoryDataset createDataset() {
        
     	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-    	Format f = new SimpleDateFormat("dd");
+    	Format f = new SimpleDateFormat("dd/MM");
     	int total = 0;
         for(Date date : PersonDirectory.perDayInfectedPeople.keySet()) {
+        	System.out.println("date :: " + date + " infected :: " + PersonDirectory.perDayInfectedPeople.get(date).size());
         	total += PersonDirectory.perDayInfectedPeople.get(date).size();
         	dataset.addValue((Integer)Math.round(PersonDirectory.perDayInfectedPeople.get(date).size()), "Infected People Graph", f.format(date));
         }               
-        System.out.println("total :: " + total);
+        
+        logger.info("total Infections:: " + total);
         return dataset; 
    }
     

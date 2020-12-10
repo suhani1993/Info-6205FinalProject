@@ -1,15 +1,11 @@
 
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.List;
 
 import org.junit.Test;
 
-import main.map.LocationPoint;
 import main.person.Person;
-import main.person.PersonDirectory;
 
 public class PersonTest {
 
@@ -39,6 +35,13 @@ public class PersonTest {
 		Person person = new Person();
 		person.setPersonId(1);
 		assertEquals(person.getPersonId(), 1);
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testGotoAnotherPlace() {
+		Person person = new Person();
+		person.gotoAnotherPlace(null, 1, 1);
+		fail();
 	}
 	
 }
