@@ -119,8 +119,6 @@ public class Person {
 
 		locationPoint.setX(nextX);
 		locationPoint.setY(nextY);
-
-		System.out.println("Updated x : " + locationPoint.getX() + " y : " + locationPoint.getY());
 	}
 
 	public boolean isMaskEffective() {

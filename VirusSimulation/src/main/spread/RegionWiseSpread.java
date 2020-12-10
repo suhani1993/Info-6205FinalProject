@@ -20,12 +20,18 @@ public class RegionWiseSpread extends Spread {
 
 	private String location;
 	private int population;
-	private int death;
-	private int cases;
-	private int recover;
 	private Double socialDistance;
 	private double usageOfMask;
 	private double effectivenessOfMask;
+	private int noofDays;
+	
+	public int getNoofDays() {
+		return noofDays;
+	}
+
+	public void setNoofDays(int noofDays) {
+		this.noofDays = noofDays;
+	}
 
 	public double getUsageOfMask() {
 		return usageOfMask;
@@ -67,30 +73,6 @@ public class RegionWiseSpread extends Spread {
 		this.population = population;
 	}
 
-	public int getDeath() {
-		return death;
-	}
-
-	public void setDeath(int death) {
-		this.death = death;
-	}
-
-	public int getCases() {
-		return cases;
-	}
-
-	public void setCases(int cases) {
-		this.cases = cases;
-	}
-
-	public int getRecover() {
-		return recover;
-	}
-
-	public void setRecover(int recover) {
-		this.recover = recover;
-	}
-
 	/*
 	 * RegionWiseSpread -> Local object to save data of config file
 	 * LocationPoint    -> Selected location's latitude and longitude from google map
@@ -98,11 +80,9 @@ public class RegionWiseSpread extends Spread {
 	 */
 	public RegionWiseSpread setDataInLocationWiseSpread(RegionWiseSpread regionWiseSpread,
 			LocationPoint locationPoint) {
-			FileInputStream in;
 			try {
-				in = new FileInputStream("config.properties");
-				Properties p = new Properties();
-				p.load(in);
+				
+				Properties p = loadPropertiesFile();
 	
 				int population = Integer.parseInt(p.getProperty("POPULATION_DENSITY"));
 				Double k = Double.parseDouble(CommonUtils.getDefaultKFactor(p.getProperty("K_FACTOR")));
@@ -110,19 +90,35 @@ public class RegionWiseSpread extends Spread {
 				Double s = Double.parseDouble(CommonUtils.getDefaultSocialDistance(p.getProperty("SOCIAL_DISTANCING")));
 				Double usageofMask = Double.parseDouble(CommonUtils.getDefaultMaskUsage(p.getProperty("USAGE_OF_MASK")));
 				Double effectivenessofMask = Double.parseDouble(CommonUtils.getDefaultEffectivenessOfMask(p.getProperty("EFFECTIVENESS_OF_MASK")));
+				Integer noofDays = Integer.parseInt(CommonUtils.getDefaultNoofDays(p.getProperty("NO_OF_DAYS_FROM_TODAY")));
 				regionWiseSpread.setLocation(locationPoint.getName());
 				regionWiseSpread.setPopulation(population);
 				regionWiseSpread.setK(k);
 				regionWiseSpread.setR(r);
 				regionWiseSpread.setSocialDistance(s);
 				regionWiseSpread.setUsageOfMask(usageofMask);
-				regionWiseSpread.setEffectivenessOfMask(effectivenessofMask);			
+				regionWiseSpread.setEffectivenessOfMask(effectivenessofMask);
+				regionWiseSpread.setNoofDays(noofDays);
 				return regionWiseSpread;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return null;
 
+	}
+
+	public Properties loadPropertiesFile() {
+		FileInputStream in;
+		Properties p = null;
+		try {
+			in = new FileInputStream("config.properties");
+			p = new Properties();
+			p.load(in);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return p;
 	}
 
 	/*
@@ -166,10 +162,8 @@ public class RegionWiseSpread extends Spread {
 			 * While creating person, based on random number a person has worn mask or has not worn mask
 			 */
 			for(int i=0;i<population;i++) {
-				LocationPoint locationPoint = new LocationPoint();
-				locationPoint.setX((random.nextInt(100)));
-				locationPoint.setY((random.nextInt(100)));
 				
+				LocationPoint locationPoint = createNewLocationPoint(random);
 				if(randomMask) {
 					/*
 					 * Select random number either 0 or 1
@@ -208,17 +202,18 @@ public class RegionWiseSpread extends Spread {
 			
 			personDirectory.generatePatient(personDirectory, regionWiseSpread);
 			
-//			for(Person person : personDirectory.getPersonList()) {
-//				if(person.getInfectedPeople() != null) {
-//					System.out.println(person.getPersonId() + " " + person.getInfectedPeople().size());
-//				}
-//			}
-			
 //			createLineGraphAgeWiseInfected();
 			
 			//Create date wise infected people graph
 			createLineGraphDateWiseInfected();
 	   }
+
+	public LocationPoint createNewLocationPoint(Random random) {
+		LocationPoint locationPoint = new LocationPoint();
+		locationPoint.setX((random.nextInt(100)));
+		locationPoint.setY((random.nextInt(100)));
+		return locationPoint;
+	}
 
 	/*
 	 * Datewise infected people graph GUI

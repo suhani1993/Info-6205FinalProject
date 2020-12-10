@@ -1,6 +1,5 @@
 package main.person;
 
-import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -114,7 +113,6 @@ public class PersonDirectory {
 								nextPerson.getInfectedPeople().size() >= R_Factor)) {
 							continue;
 						}
-						
 						//check mask effectiveness
 						checkMaskEffectiveness(person, nextPerson, regionWiseSpread, random);
 						
@@ -138,22 +136,22 @@ public class PersonDirectory {
 								nextPerson.setInfectedPeople(new ArrayList<>());
 							}
 							
-							if(!person.isInfected()) {
+							if(!person.isInfected() && !person.isMaskEffective()) {
 								person.setInfected(true);
-								if(agewiseInfectedPeople.get(person.getAge()) == null) {
-									agewiseInfectedPeople.put(person.getAge(), new ArrayList<>());
-								}
-								agewiseInfectedPeople.get(person.getAge()).add(person);
+//								if(agewiseInfectedPeople.get(person.getAge()) == null) {
+//									agewiseInfectedPeople.put(person.getAge(), new ArrayList<>());
+//								}
+//								agewiseInfectedPeople.get(person.getAge()).add(person);
 								nextPerson.getInfectedPeople().add(person);
 								perDayInfectedPeople.get(nextDate).add(person);
 							}
-							if(!nextPerson.isInfected()) {
+							if(!nextPerson.isInfected() && !nextPerson.isMaskEffective()) {
 								nextPerson.setInfected(true);
 								
-								if(agewiseInfectedPeople.get(nextPerson.getAge()) == null) {
-									agewiseInfectedPeople.put(nextPerson.getAge(), new ArrayList<>());
-								}
-								agewiseInfectedPeople.get(nextPerson.getAge()).add(nextPerson);
+//								if(agewiseInfectedPeople.get(nextPerson.getAge()) == null) {
+//									agewiseInfectedPeople.put(nextPerson.getAge(), new ArrayList<>());
+//								}
+//								agewiseInfectedPeople.get(nextPerson.getAge()).add(nextPerson);
 								
 								person.getInfectedPeople().add(nextPerson);
 								perDayInfectedPeople.get(nextDate).add(nextPerson);
@@ -180,7 +178,7 @@ public class PersonDirectory {
 		int randomWalkPercent = CommonUtils.randomWalkPercent(random.nextInt(10));
 		int totalWalk = (regionWiseSpread.getPopulation() * randomWalkPercent)/100;
 		//For 30 day the system performs disease spread calculation
-		for(int i=0;i<31;i++) {
+		for(int i=0;i<regionWiseSpread.getNoofDays();i++) {
 			calendar.setTime(new Date());
 			calendar.add(Calendar.DAY_OF_YEAR, i);
 			Date nextDate = calendar.getTime();
@@ -189,11 +187,15 @@ public class PersonDirectory {
 				Person person = personDirectory.getPersonList().get(0);
 				person.setFollowSocialDistancing(false);
 				person.setInfected(true);
-				if(agewiseInfectedPeople.get(person.getAge()) == null) {
-					List<Person> persons = new ArrayList<>();
-					persons.add(person);
-					agewiseInfectedPeople.put(person.getAge(), persons);
+				if(perDayInfectedPeople.get(nextDate) == null) {
+					perDayInfectedPeople.put(nextDate, new ArrayList<>());
 				}
+				perDayInfectedPeople.get(nextDate).add(person);
+//				if(agewiseInfectedPeople.get(person.getAge()) == null) {
+//					List<Person> persons = new ArrayList<>();
+//					persons.add(person);
+//					agewiseInfectedPeople.put(person.getAge(), persons);
+//				}
 				randomWalk(personDirectory, totalWalk, nextDate, regionWiseSpread, person);
 			}else {
 				randomWalk(personDirectory, totalWalk, nextDate, regionWiseSpread, null);
@@ -202,44 +204,31 @@ public class PersonDirectory {
 	}
 
 	/*
-	 * When a person is in range of social distance with other person then check if both have worn mask
-	 * If yes then calculate mask effectiveness of both
+	 * When a person is in range of social distance with other person then check if anyone has worn mask
+	 * If yes then calculate mask effectiveness of the person who has worn mask
 	 * Ex. Mask effectiveness = 0.8 mean 80% mask is effective and can control spread of disease 80%
 	 *     So a person will not be infected has 80% chances
 	 *     Get random no from 0 to 100 -> If no between 0 and 80 mean a person will not infect
 	 *     If a no between 81 and 100 then a person will infect
 	 */
 	private void checkMaskEffectiveness(Person person, Person nextPerson, RegionWiseSpread regionWiseSpread, Random random) {
-//		if((person.isWearMask() && !nextPerson.isWearMask()) || (!person.isWearMask() && nextPerson.isWearMask())) {
-//			int effectiveness = random.nextInt(100);
-//			if(effectiveness <= maskEffectiveness) {
-//				if(person.isWearMask()) {
-//					person.setMaskEffective(true);
-//				}else if(nextPerson.isWearMask()) {
-//					nextPerson.setMaskEffective(true);
-//				}
-//			}else {
-//				if(person.isWearMask()) {
-//					person.setMaskEffective(false);
-//					nextPerson.setMaskEffective(false);
-//				}else if(nextPerson.isWearMask()) {
-//					nextPerson.setMaskEffective(false);
-//					person.setMaskEffective(false);
-//				}
-//			}
-//		}else if(!person.isWearMask() && !nextPerson.isWearMask()) {
-//			nextPerson.setMaskEffective(false);
-//			person.setMaskEffective(false);
-//		}else 
-		if(person.isWearMask() && nextPerson.isWearMask()) {
+		if(person.isWearMask() || nextPerson.isWearMask()) {
 			int maskEffectiveness = (int) Math.round(regionWiseSpread.getEffectivenessOfMask() * 100);
 			int effectiveness = random.nextInt(100);
 			if(effectiveness <= maskEffectiveness) {
-				person.setMaskEffective(true);
-				nextPerson.setMaskEffective(true);
+				if(person.isWearMask()) {
+					person.setMaskEffective(true);
+				}
+				if(nextPerson.isWearMask()) {
+					nextPerson.setMaskEffective(true);
+				}
 			}else {
-				person.setMaskEffective(false);
-				nextPerson.setMaskEffective(false);
+				if(person.isWearMask()) {
+					person.setMaskEffective(false);
+				}
+				if(nextPerson.isWearMask()) {
+					nextPerson.setMaskEffective(false);
+				}
 			}
 		}
 	}

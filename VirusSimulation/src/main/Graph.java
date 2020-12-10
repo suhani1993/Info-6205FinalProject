@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.io.FileInputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
@@ -23,6 +24,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import main.person.Person;
 import main.person.PersonDirectory;
 
 
@@ -56,8 +58,8 @@ public class Graph extends javax.swing.JPanel {
 			str = str.substring(0, str.length() - 1);
 			//Create Header label from config file factors and display all factor in a label
 			JLabel jLabel = new JLabel(str);
-			jLabel.setFont(new Font("Verdana", Font.PLAIN, 20));
-			jLabel.setPreferredSize(new Dimension(1600, 24));
+			jLabel.setFont(new Font("Verdana", Font.PLAIN, 12));
+			jLabel.setPreferredSize(new Dimension(1200, 24));
 			jPanel.add(jLabel);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -74,7 +76,7 @@ public class Graph extends javax.swing.JPanel {
         ((CategoryPlot)plot).getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		
         ChartPanel chartPanel = new ChartPanel(chart);   
-        chartPanel.setPreferredSize(new java.awt.Dimension( 900 , 900 ) );
+        chartPanel.setPreferredSize(new java.awt.Dimension( 900 , 600 ) );
         jPanel.add(chartPanel, BorderLayout.CENTER);
         jFrame.setExtendedState(jFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         jFrame.add(jPanel);
@@ -128,11 +130,12 @@ public class Graph extends javax.swing.JPanel {
        
     	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
     	Format f = new SimpleDateFormat("dd");
+    	int total = 0;
         for(Date date : PersonDirectory.perDayInfectedPeople.keySet()) {
-        	
+        	total += PersonDirectory.perDayInfectedPeople.get(date).size();
         	dataset.addValue((Integer)Math.round(PersonDirectory.perDayInfectedPeople.get(date).size()), "Infected People Graph", f.format(date));
         }               
-
+        System.out.println("total :: " + total);
         return dataset; 
    }
     

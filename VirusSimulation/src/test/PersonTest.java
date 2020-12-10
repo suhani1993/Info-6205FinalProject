@@ -5,44 +5,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import main.map.LocationPoint;
 import main.person.Person;
 import main.person.PersonDirectory;
 
-class PersonTest {
+public class PersonTest {
 
 	@Test
-	void testGetAndSetAge() {
+	public void testGetAndSetAge() {
 		Person person = new Person();
 		person.setAge(18);
 		assertEquals(person.getAge(), 18);
 	}
 	
 	@Test
-	void testGetAndSetInfected() {
+	public void testGetAndSetInfected() {
 		Person person = new Person();
 		person.setInfected(true);
 		assertEquals(person.isInfected(), true);
 	}
 	
 	@Test
-	void testIsWearMask() {
+	public void testIsWearMask() {
 		Person person = new Person();
 		person.setWearMask(true);
 		assertEquals(person.isWearMask(), true);
 	}
 
 	@Test
-	void testSetAndGetPersonId() {
+	public void testSetAndGetPersonId() {
 		Person person = new Person();
 		person.setPersonId(1);
 		assertEquals(person.getPersonId(), 1);
 	}
 	
 	@Test
-	void testCompareObject() {
+	public void testCompareObject() {
 		int personId = 5;
 		LocationPoint locationPoint = new LocationPoint();
 		locationPoint.setX(10);

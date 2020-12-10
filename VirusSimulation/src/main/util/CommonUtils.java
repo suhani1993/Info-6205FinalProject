@@ -68,6 +68,13 @@ public class CommonUtils {
 		}
 		return property;
 	}
+	
+	public static String getDefaultNoofDays(String property) {
+		if(property == null) {
+			return String.valueOf(30);
+		}
+		return property;
+	}
 
 	public static double euclidianDistance(int x1, int x2, int y1, int y2) {
 		double xDistnace = Math.pow((x2-x1), 2);

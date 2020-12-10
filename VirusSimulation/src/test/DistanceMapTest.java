@@ -18,6 +18,7 @@ public class DistanceMapTest {
 	public void testSetConfig() {
 		JFrame frame = new JFrame();
 		assertEquals(DistanceMap.setNameOfComponent(frame, "Set Configurations"), frame);
+		frame.dispose();
 	}
 	
 	@Test
@@ -34,8 +35,8 @@ public class DistanceMapTest {
 	@Test
 	public void testCheckJFrame() {
 		JFrame jFrame = new JFrame();
-		jFrame.setVisible(true);
-		assertTrue(jFrame.isVisible());
+		jFrame.setVisible(false);
+		assertTrue(!jFrame.isVisible());
 	}
 
 }
