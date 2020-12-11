@@ -21,9 +21,12 @@ Virus Simulation
  - Click on File->Open Projects from FILE System. Browse to the directory where this repository is checked out.  
  - Select VirusSimulation from Info-6205FinalProject and click Finish.  
  - Right click on VirusSimulation from Package Explorer and select Properties->Java Build path->Libraries.  
- - Click on Add External JARS.  
- - Browse to (your git workspcae)\Info-6205FinalProject\VirusSimulation and add all the jar files from "jar files" and "jxbrowser-7.12-cross-desktop-win_mac_linux\lib" folder.  
-  - Click "Apply and Close".  
-  - To build the project click on Project from top Menu and Select 'Clean". This will clean the project and build it. (Note you can also right click on the project and select build if you have that option available)  
-  - Right click on the project and select Run to run the project.
+ - Click on "Add External JARS".  
+ - Browse to (your git workspcae)\Info-6205FinalProject\VirusSimulation\lib and add all the .jar files in it.     
+ - Click on "Add Library", select JUnit and click Next and then Finish. This step can be ignored if JUnit is already added.  
+ - Click "Apply and Close".  
+ - To build the project(VirusSimulation) click on "Project" from top Menu and Select 'Clean". This will clean the project and build it. (Note you can also right click on the project and select build if you have that option available)  
+  - Right click on the project(VirusSimulation) and select "Run as" and then "Java Application". Select "Main - main" in the next dialog box and click OK.  
+  - The project will run now.  
+  - Further information on how to run the simulation can be found in Document folder.  
  
