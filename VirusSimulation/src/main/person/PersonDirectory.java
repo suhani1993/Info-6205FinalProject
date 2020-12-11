@@ -3,10 +3,13 @@ package main.person;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import main.map.LocationPoint;
 import main.spread.RegionWiseSpread;
@@ -14,9 +17,10 @@ import main.util.CommonUtils;
 
 public class PersonDirectory {
 	
+	static Logger logger = Logger.getLogger(PersonDirectory.class.getName());
+	
 	private List<Person> personList;
 	public static Map<Date, List<Person>> perDayInfectedPeople = new TreeMap<>();
-	public static Map<Integer, List<Person>> agewiseInfectedPeople = new TreeMap<>();
 	
 	public PersonDirectory() {
 		personList = new ArrayList<>();
@@ -44,9 +48,8 @@ public class PersonDirectory {
 	
 	/*
 	 * R-Factor -> No of persons an infected person can infect
-	 * totalWalk -> At each day, between 5% and 10% people of total population can walk
-	 *              so it is the number which represents no of people who walk per day
-	 * nextDate -> Day between 0 and 30 including from current date
+	 * nextDate -> Day between 0 and 30 including current date
+	 * previousDate -> Previous date 
 	 * person -> The very person who is infected
 	 * 
 	 * 
@@ -55,20 +58,13 @@ public class PersonDirectory {
 	 * 3. If both people have worn mask then only check mask effectiveness
 	 * 4. Infect people if not already infected
 	 */
-	private void randomWalk(PersonDirectory personDirectory, int totalWalk, Date nextDate, RegionWiseSpread regionWiseSpread, Person person) {
+	private void randomWalk(PersonDirectory personDirectory, Date nextDate, Date previousDate, RegionWiseSpread regionWiseSpread, Queue<Person> personQueue) {
 		Random random = new Random();
 		int R_Factor = (int) Math.round(regionWiseSpread.getR());
-		/*
-		 * Per day between 5% and 10% people walk
-		 */
-		for(int i=0;i<totalWalk;i++) {
-			int randomPerson = random.nextInt(regionWiseSpread.getPopulation());
-			if(i != 0 || person == null) {
-				person = personDirectory.getPersonList().get(randomPerson);
-			}
+		while(personQueue.peek() != null && personQueue.peek().getInfectionDate().equals(previousDate)) {
+			Person person = personQueue.remove();
 			
-			//Perform random walk of a person
-			person.gotoAnotherPlace(person.getPoint(), random.nextInt(100), random.nextInt(100));
+			person.gotoAnotherPlace(person.getPoint(), random.nextInt(200), random.nextInt(200));
 			
 			/*
 			 * A person can infect maximum no of people = R_Factor
@@ -93,8 +89,6 @@ public class PersonDirectory {
 					
 					double euDistance = CommonUtils.euclidianDistance(person.getPoint().getX() , nextPerson.getPoint().getX(), 
 							person.getPoint().getY(), nextPerson.getPoint().getY());
-//					double xSquare = Math.pow((person.getPoint().getX() - nextPerson.getPoint().getX()), 2);
-//					double ySquare = Math.pow((person.getPoint().getY() - nextPerson.getPoint().getY()), 2);
 					if(euDistance <= regionWiseSpread.getSocialDistance()) {
 					
 						/*
@@ -116,10 +110,6 @@ public class PersonDirectory {
 						//check mask effectiveness
 						checkMaskEffectiveness(person, nextPerson, regionWiseSpread, random);
 						
-						if(perDayInfectedPeople.get(nextDate) == null) {
-							perDayInfectedPeople.put(nextDate, new ArrayList<>());
-						}
-						
 						/*
 						 * 1. If one person has worn mask and other has not worn mask then infect him
 						 * 2. If a person has worn mask and other person has also worn mask but anyone 
@@ -127,10 +117,9 @@ public class PersonDirectory {
 						 * 3. If both persons has worn mask and both masks are effective then do
 						 *    not infect a person
 						 */
-//						if(person.isMaskEffective() || nextPerson.isMaskEffective()) {
-//							continue;
-//						}else
-						if(!person.isMaskEffective() || !nextPerson.isMaskEffective()) {
+						if(person.isMaskEffective() || nextPerson.isMaskEffective()) {
+							continue;
+						}else if(!person.isMaskEffective() || !nextPerson.isMaskEffective()) {
 							if(person.getInfectedPeople() == null) {
 								person.setInfectedPeople(new ArrayList<>());
 							}
@@ -141,23 +130,17 @@ public class PersonDirectory {
 							
 							if(!person.isInfected() && !person.isMaskEffective()) {
 								person.setInfected(true);
-//								if(agewiseInfectedPeople.get(person.getAge()) == null) {
-//									agewiseInfectedPeople.put(person.getAge(), new ArrayList<>());
-//								}
-//								agewiseInfectedPeople.get(person.getAge()).add(person);
+								person.setInfectionDate(nextDate);
 								nextPerson.getInfectedPeople().add(person);
-								perDayInfectedPeople.get(nextDate).add(person);
+								addDataInInfectedPeopleMap(nextDate, person);
+								personQueue.add(person);
 							}
 							if(!nextPerson.isInfected() && !nextPerson.isMaskEffective()) {
 								nextPerson.setInfected(true);
-								
-//								if(agewiseInfectedPeople.get(nextPerson.getAge()) == null) {
-//									agewiseInfectedPeople.put(nextPerson.getAge(), new ArrayList<>());
-//								}
-//								agewiseInfectedPeople.get(nextPerson.getAge()).add(nextPerson);
-								
+								nextPerson.setInfectionDate(nextDate);
 								person.getInfectedPeople().add(nextPerson);
-								perDayInfectedPeople.get(nextDate).add(nextPerson);
+								addDataInInfectedPeopleMap(nextDate, nextPerson);
+								personQueue.add(nextPerson);
 							}
 						}
 					}
@@ -177,33 +160,61 @@ public class PersonDirectory {
 	 */
 	public void generatePatient(PersonDirectory personDirectory, RegionWiseSpread regionWiseSpread) {
 		Calendar calendar = Calendar.getInstance();
-		Random random = new Random();
-		int randomWalkPercent = CommonUtils.randomWalkPercent(random.nextInt(5));
-		int totalWalk = (regionWiseSpread.getPopulation() * randomWalkPercent)/100;
-		//For 30 day the system performs disease spread calculation
+		Queue<Person> personQueue = new LinkedList<Person>();
+		int initialInfected = (int)Math.round((regionWiseSpread.getPopulation() * 0.02)/100);
+		if(initialInfected == 0) {
+			initialInfected = 10;
+		}
 		for(int i=0;i<regionWiseSpread.getNoofDays();i++) {
-			calendar.setTime(new Date());
-			calendar.add(Calendar.DAY_OF_YEAR, i);
-			Date nextDate = calendar.getTime();
 			
+			Date nextDate = getNextDate(i, calendar);
 			if(i==0) {
-				Person person = personDirectory.getPersonList().get(0);
-				person.setFollowSocialDistancing(false);
-				person.setInfected(true);
-				if(perDayInfectedPeople.get(nextDate) == null) {
-					perDayInfectedPeople.put(nextDate, new ArrayList<>());
+				logger.info("Virus Spread Start...");
+				for(int k=0;k<initialInfected;k++) {
+					Person person = personDirectory.getPersonList().get(k);
+					person.setInfected(true);
+					person.setInfectionDate(nextDate);
+					addDataInInfectedPeopleMap(nextDate, person);
+					personQueue.add(person);
 				}
-				perDayInfectedPeople.get(nextDate).add(person);
-//				if(agewiseInfectedPeople.get(person.getAge()) == null) {
-//					List<Person> persons = new ArrayList<>();
-//					persons.add(person);
-//					agewiseInfectedPeople.put(person.getAge(), persons);
-//				}
-				randomWalk(personDirectory, totalWalk, nextDate, regionWiseSpread, person);
 			}else {
-				randomWalk(personDirectory, totalWalk, nextDate, regionWiseSpread, null);
+				if(i==(regionWiseSpread.getNoofDays()/2)) {
+					logger.info("50% calculation complete...");
+				}
+				if(!personQueue.isEmpty()) {
+					calendar.setTime(nextDate);
+					calendar.add(Calendar.DAY_OF_YEAR, -1);
+					Date previousDate = calendar.getTime();
+					randomWalk(personDirectory, nextDate, previousDate, regionWiseSpread, personQueue);
+				}else {
+					break;
+				}
 			}
 		}
+		logger.info("Virus Spread Complete...");
+	}
+
+	public Date getNextDate(int i, Calendar calendar) {
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DAY_OF_YEAR, i);
+		calendar = setDateAndTimeZero(calendar);
+		return calendar.getTime();
+		
+	}
+
+	public void addDataInInfectedPeopleMap(Date nextDate, Person person) {
+		if(perDayInfectedPeople.get(nextDate) == null) {
+			perDayInfectedPeople.put(nextDate, new ArrayList<>());
+		}
+		perDayInfectedPeople.get(nextDate).add(person);
+	}
+
+	public Calendar setDateAndTimeZero(Calendar calendar) {
+		calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        return calendar;
 	}
 
 	/*
@@ -214,7 +225,7 @@ public class PersonDirectory {
 	 *     Get random no from 0 to 100 -> If no between 0 and 80 mean a person will not infect
 	 *     If a no between 81 and 100 then a person will infect
 	 */
-	private void checkMaskEffectiveness(Person person, Person nextPerson, RegionWiseSpread regionWiseSpread, Random random) {
+	public void checkMaskEffectiveness(Person person, Person nextPerson, RegionWiseSpread regionWiseSpread, Random random) {
 		if(person.isWearMask() || nextPerson.isWearMask()) {
 			int maskEffectiveness = (int) Math.round(regionWiseSpread.getEffectivenessOfMask() * 100);
 			int effectiveness = random.nextInt(100);

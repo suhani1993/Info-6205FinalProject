@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,6 +18,8 @@ import main.person.PersonDirectory;
 import main.util.CommonUtils;
 
 public class RegionWiseSpread extends Spread {
+	
+	static Logger logger = Logger.getLogger(RegionWiseSpread.class.getName());
 
 	private String location;
 	private int population;
@@ -99,6 +102,8 @@ public class RegionWiseSpread extends Spread {
 				regionWiseSpread.setUsageOfMask(usageofMask);
 				regionWiseSpread.setEffectivenessOfMask(effectivenessofMask);
 				regionWiseSpread.setNoofDays(noofDays);
+				
+				logger.info("Configurations added....");
 				return regionWiseSpread;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -199,7 +204,7 @@ public class RegionWiseSpread extends Spread {
 				}
 				i++;
 			}
-			
+			logger.info("Persons created...");
 			personDirectory.generatePatient(personDirectory, regionWiseSpread);
 			
 //			createLineGraphAgeWiseInfected();
@@ -211,12 +216,12 @@ public class RegionWiseSpread extends Spread {
 	public LocationPoint createNewLocationPoint(Random random) {
 		LocationPoint locationPoint = new LocationPoint();
 		boolean isPositiveX = CommonUtils.getRandomBoolean(random.nextInt(2));
-		int x = random.nextInt(100);
+		int x = random.nextInt(200);
 		if(!isPositiveX) {
 			x = x*-1;
 		}
 		
-		int y = random.nextInt(100);
+		int y = random.nextInt(200);
 		if(!isPositiveX) {
 			y = y*-1;
 		}
@@ -232,26 +237,15 @@ public class RegionWiseSpread extends Spread {
 	private void createLineGraphDateWiseInfected() {
 		JFrame jFrame = new JFrame("Graph");
 		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jFrame.setSize(800, 800);
+		jFrame.setSize(900, 900);
+		jFrame.setLocationRelativeTo(null);
 		jFrame.setVisible(true);
 		JPanel jPanel = new JPanel();
 		jPanel.setBackground(new Color(236, 113, 107));
 		Graph graph = new Graph(jFrame, jPanel);
 		
 		//calculate line graph from infected people
-		graph.populateLineGraphDateWiseInfected();
+		graph.timeSeriesChart();
 	}
-	
-	private void createLineGraphAgeWiseInfected() {
-		JFrame jFrame = new JFrame("Graph");
-		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jFrame.setSize(800, 800);
-		jFrame.setVisible(true);
-		JPanel jPanel = new JPanel();
-		jPanel.setBackground(new Color(236, 113, 107));
-		Graph graph = new Graph(jFrame, jPanel);
-		graph.populateLineGraphAgeWiseInfected();
-	}
-
 }
 

@@ -1,4 +1,4 @@
-package test;
+
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -10,6 +10,7 @@ import main.util.CommonUtils;
 
 public class CommonUtilsTest {
 	
+	//Calculates infected percent from K Factor
 	@Test
 	public void testCalculateInfectedPercent() {
 		
@@ -18,6 +19,7 @@ public class CommonUtilsTest {
 		assertEquals(CommonUtils.calculateInfectedPercent(2.0), 70);
 	}
 	
+	//distance = sqrt(x^2 + y^2) -> euclidian distance test
 	@Test
 	public void testEuclidianDistance() {
 		
@@ -32,6 +34,7 @@ public class CommonUtilsTest {
 		assertEquals(8.48, CommonUtils.euclidianDistance(8,2,10,4), 0.01);
 	}
 	
+	//test age, if <18 then change it to 18
 	@Test
 	public void testRandomAge() {
 		
@@ -39,6 +42,7 @@ public class CommonUtilsTest {
 		assertEquals(CommonUtils.randomAge(15), 18);
 	}
 	
+	//test for K factor value, if not given then take 0.8 default
 	@Test
 	public void testGetDefaultKFactor() {
 		assertEquals(CommonUtils.getDefaultKFactor("0.8"), "0.8");
