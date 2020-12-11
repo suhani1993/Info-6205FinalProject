@@ -237,7 +237,7 @@ public class RegionWiseSpread extends Spread {
 	private void createLineGraphDateWiseInfected() {
 		JFrame jFrame = new JFrame("Graph");
 		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jFrame.setSize(600, 600);
+		jFrame.setSize(900, 900);
 		jFrame.setLocationRelativeTo(null);
 		jFrame.setVisible(true);
 		JPanel jPanel = new JPanel();
@@ -245,7 +245,7 @@ public class RegionWiseSpread extends Spread {
 		Graph graph = new Graph(jFrame, jPanel);
 		
 		//calculate line graph from infected people
-		graph.populateLineGraphDateWiseInfected();
+		graph.timeSeriesChart();
 	}
 }
 
